@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank of Milo - Online Banking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #007aff;
+            --secondary-color: #484848;
+            --text-color: #ffffff;
+            --text-secondary: #b3b3b3;
+            --error-color: #ff453a;
+            --success-color: #30d158;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--secondary-color);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .balance-display {
+            font-size: 36px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .account-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: rgba(48, 209, 88, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-on-hold {
+            background-color: rgba(255, 69, 58, 0.2);
+            color: var(--error-color);
+        }
+
+        .status-closed {
+            background-color: rgba(142, 142, 147, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .positive {
+            color: var(--success-color);
+        }
+
+        .negative {
+            color: var(--error-color);
+        }
+
+        .transaction-details {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .loan-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .loan-item:last-child {
+            border-bottom: none;
+        }
+
+        .loan-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 214, 10, 0.2);
+            color: #ffd60a;
+        }
+
+        .status-approved {
+            background-color: rgba(48, 209, 88, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-denied {
+            background-color: rgba(255, 69, 58, 0.2);
+            color: var(--error-color);
+        }
+
+        .status-completed {
+            background-color: rgba(142, 142, 147, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .account-number {
+            font-family: monospace;
+            letter-spacing: 1px;
+            background-color: rgba(0, 122, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .contract-section {
+            margin-bottom: 20px;
+        }
+
+        .contract-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .contract-text {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .initial-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .initial-input {
+            width: 60px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--surface-color), var(--bg-color));
+            border-radius: var(--border-radius);
+            margin-bottom: 40px;
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary-color), #00c6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 18px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: var(--surface-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .benefits-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .benefit-item {
+            background: var(--surface-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .registration-step {
+            margin-bottom: 20px;
+        }
+
+        .step-indicator {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .account-info-box {
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-value {
+            font-family: monospace;
+            font-size: 24px;
+            color: var(--primary-color);
+            padding: 10px;
+            background: rgba(0, 122, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .pin-display {
+            letter-spacing: 5px;
+        }
+
+        .important-notice {
+            color: var(--error-color);
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 32px;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px;
+            }
+            
+            .btn-large {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefits-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .auth-section {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .hero-section {
+                padding: 40px 0;
+            }
+            
+            .feature-card {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .initial-input {
+                width: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Bank of Milo</div>
+            <div class="auth-section">
+                <button id="loginBtn" class="btn btn-outline">Sign In</button>
+                <button id="openAccountBtn" class="btn btn-primary">Open Account</button>
+            </div>
+        </header>
+
+        <main id="mainContent">
+            <!-- Landing Page Content -->
+            <div class="hero-section">
+                <h1>Welcome to the Future of Banking</h1>
+                <p class="hero-subtitle">Experience unmatched benefits and revolutionary banking services</p>
+                <button id="heroOpenAccountBtn" class="btn btn-primary btn-large">Open Your Account Today</button>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>7.99% APY Savings</h3>
+                    <p>Earn industry-leading returns on your savings with our revolutionary APY program</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Zero Minimum Balance</h3>
+                    <p>Start your banking journey with no minimum balance requirements</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Instant Account Opening</h3>
+                    <p>Get started in minutes with our streamlined digital onboarding</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Advanced Security</h3>
+                    <p>Rest easy with our state-of-the-art security measures</p>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to Transform Your Banking Experience?</h2>
+                <p>Join thousands of satisfied customers who've already made the switch</p>
+                <button id="ctaOpenAccountBtn" class="btn btn-primary btn-large">Open Account Now</button>
+            </div>
+            
+            <div class="benefits-section">
+                <div class="benefit-item">
+                    <h4>💳 Customizable Debit Cards</h4>
+                    <p>Design your own card with our unique customization options</p>
+                </div>
+                <div class="benefit-item">
+                    <h4>🌍 Global Reach</h4>
+                    <p>Access your funds and make transactions worldwide with ease</p>
+                </div>
+                <div class="benefit-item">
+                    <h4>📱 Modern Banking</h4>
+                    <p>Access your account anytime, anywhere with our cutting-edge mobile platform</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Multi-step Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Open Your Account</h3>
+                <div class="step-indicator">Step <span id="currentStep">1</span> of 4</div>
+                <button class="close-btn">&times;</button>
+            </div>
+
+            <!-- Step 1: Basic Info -->
+            <div class="registration-step" id="step1">
+                <h4>Personal Information</h4>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" required>
+                </div>
+            </div>
+
+            <!-- Step 2: Terms -->
+            <div class="registration-step hidden" id="step2">
+                <h4>Terms & Conditions</h4>
+                <div class="terms-container">
+                    <h5>ARTICLE I: DEFINITIONS AND GENERAL PROVISIONS</h5>
+                    <p><strong>1.1 Account Establishment Prerequisites</strong><br>
+                    The Account Holder hereby acknowledges that maintenance of an active account with the Bank of Milo necessitates the perpetual maintenance of a minimum monetary balance of Twenty Dollars ($0.00) USD or Twenty Pounds Sterling (£0.00) GBP within the designated depository account, contingent upon the Account Holder's jurisdiction of residence.</p>
+                    <div class="initial-line">
+                        <span>Initial:</span>
+                        <input type="text" class="initial-input" maxlength="3" required>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>1.2 Monthly Service Assessment</strong><br>
+                        The Account Holder agrees to remit a recurring monthly service fee of Five Dollars ($5.00) USD or Five Pounds Sterling (£5.00) GBP, assessed on the anniversary date of account establishment and debited automatically from the account balance.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>1.3 Interest Compensation Policy</strong><br>
+                        The Bank of Milo hereby discloses that no interest, dividends, or monetary compensation shall accrue to the Account Holder's benefit on deposited funds maintained within the account infrastructure.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE II: LENDING PROVISIONS</h5>
+                        <p><strong>2.1 Credit Extension Parameters</strong><br>
+                        The Bank of Milo reserves the unilateral discretion to extend credit facilities to qualified Account Holders, with interest rates determined through individualized assessment protocols and rendered non-negotiable upon establishment.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>2.2 Loan Terms and Conditions</strong><br>
+                        All lending arrangements shall be subject to the Bank's proprietary underwriting standards and risk assessment methodologies, with terms established on a case-by-case basis.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>2.3 Credit Disbursement Methodology</strong><br>
+                        The Account Holder acknowledges that approved loan proceeds shall be credited directly to the designated Bank of Milo account and shall not be disbursed in physical currency or negotiable instruments.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>2.4 Debt Assignment and Transfer</strong><br>
+                        The Account Holder consents to the Bank's unrestricted right to assign, transfer, or sell any outstanding debt obligations to third-party entities without prior notification or consent requirements.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE III: ACCOUNT POLICIES</h5>
+                        <p><strong>3.1 Deposit Insurance Disclosure</strong><br>
+                        The Account Holder acknowledges that funds deposited with the Bank of Milo are NOT protected by the Federal Deposit Insurance Corporation (FDIC) in the United States or the Financial Services Compensation Scheme (FSCS) in the United Kingdom, nor any other governmental insurance program.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>3.2 Fund Management Authorization</strong><br>
+                        The Account Holder grants the Bank of Milo broad discretionary authority over deposited funds for operational and investment purposes, subject to applicable banking regulations and fiduciary responsibilities.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>3.3 Account Termination and Asset Retention</strong><br>
+                        The Bank of Milo reserves the unilateral prerogative to effectuate account closure and retain all deposited assets at its sole discretion, without prerequisite notification or justification to the Account Holder.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE IV: DIGITAL SERVICES AND TRANSACTIONAL PROTOCOLS</h5>
+                        <p><strong>4.1 Online Banking Service Privileges</strong><br>
+                        The Account Holder acknowledges that access to digital banking platforms and electronic services constitutes a revocable privilege, not an inherent right, subject to immediate termination at the Bank's discretionary determination.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>4.2 Transactional Methodology Limitations</strong><br>
+                        The Account Holder accepts that direct electronic transactions through Bank of Milo digital infrastructure are prohibited, with monetary withdrawals exclusively available through in-person presentations at authorized Bank of Milo physical locations, subject to available account balance limitations.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>4.3 Overdraft Prohibition</strong><br>
+                        The Account Holder acknowledges that withdrawal requests exceeding the available account balance shall be categorically declined, with no overdraft facilities or negative balance accommodations permitted.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>4.4 Withdrawal Processing Protocols</strong><br>
+                        The Account Holder acknowledges that monetary withdrawal requests may require up to seventy-two (72) hours for processing and may be declined without disclosure of rationale or justification.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE V: CREDITWORTHINESS ASSESSMENT AND SCORING</h5>
+                        <p><strong>5.1 Proprietary Credit Evaluation</strong><br>
+                        The Bank of Milo reserves the right to generate, maintain, and utilize proprietary creditworthiness assessments based on undisclosed algorithmic methodologies and internal metrics.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>5.2 Credit Score Disclosure Waiver</strong><br>
+                        The Account Holder explicitly waives any right to review, challenge, or obtain disclosure of their assigned credit score or the methodologies employed in its calculation.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>5.3 Credit Information Dissemination</strong><br>
+                        The Account Holder consents to the Bank's unrestricted sharing of credit assessments with third-party entities without prior notification or consent requirements.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE VI: CARD SERVICES AND CUSTOMIZATION</h5>
+                        <p><strong>6.1 Card Customization Revocation</strong><br>
+                        The Bank of Milo reserves the unilateral authority to revoke, modify, or restrict card customization privileges without providing justification or advance notice to the Account Holder.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE VII: PRIVACY AND DATA MANAGEMENT</h5>
+                        <p><strong>7.1 Information Collection Consent</strong><br>
+                        The Account Holder consents to the Bank's collection, processing, and utilisation of personal and financial data in accordance with standard banking practices and applicable privacy regulations, including but not limited to the General Data Protection Regulation (GDPR) in the United Kingdom and European Union, and relevant privacy statutes in the United States.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>7.2 Data Protection Standards</strong><br>
+                        The Bank of Milo maintains industry-standard data protection protocols and commits to responsible stewardship of Account Holder information.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE VIII: DISPUTE RESOLUTION</h5>
+                        <p><strong>8.1 Alternative Dispute Resolution</strong><br>
+                        Any disputes arising from this agreement shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association (for US residents) or the Chartered Institute of Arbitrators (for UK residents), with the Account Holder retaining all legal rights under applicable consumer protection laws in their respective jurisdiction.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>8.2 Governing Law</strong><br>
+                        This agreement shall be governed by applicable federal and state banking regulations and consumer protection statutes in the United States, or by the Financial Conduct Authority (FCA) regulations and relevant consumer protection legislation in the United Kingdom, as determined by the Account Holder's primary residence.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ARTICLE IX: GENERAL PROVISIONS</h5>
+                        <p><strong>9.1 Account Termination</strong><br>
+                        Either party may terminate this agreement with thirty (30) days written notice, subject to the satisfaction of all outstanding obligations.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <p><strong>9.2 Amendment Procedures</strong><br>
+                        This agreement may be modified only through written consent of both parties or as required by applicable law.</p>
+                        <div class="initial-line">
+                            <span>Initial:</span>
+                            <input type="text" class="initial-input" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="contract-text">
+                        <h5>ACKNOWLEDGMENT OF TERMS</h5>
+                        <p>By signing below, the Account Holder acknowledges receipt, review, and understanding of all terms and conditions set forth in this Agreement.</p>
+                        <div class="form-group">
+                            <label for="signature">Account Holder Signature</label>
+                            <input type="text" id="signature" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signatureDate">Date</label>
+                            <input type="date" id="signatureDate" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="registerError" class="error-message hidden"></div>
+            </div>
+
+            <!-- Step 3: Set Credentials -->
+            <div class="registration-step hidden" id="step3">
+                <h4>Set Your Login Credentials</h4>
+                <div class="form-group">
+                    <label for="setUsername">Username</label>
+                    <input type="text" id="setUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="setPassword">Password</label>
+                    <input type="password" id="setPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div id="credentialsError" class="error-message hidden"></div>
+            </div>
+
+            <!-- Step 4: Account Created -->
+            <div class="registration-step hidden" id="step4">
+                <h4>Account Created Successfully!</h4>
+                <div class="account-info-box">
+                    <div class="info-item">
+                        <label>Your Account Number</label>
+                        <div class="info-value" id="accountNumberDisplay"></div>
+                    </div>
+                    <div class="info-item">
+                        <label>Your PIN</label>
+                        <div class="info-value pin-display" id="pinDisplay"></div>
+                    </div>
+                </div>
+                <div class="important-notice">
+                    Please save this information in a secure place. You will need it to access your account.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="prevStepBtn" class="btn btn-outline hidden">Previous</button>
+                <button id="nextStepBtn" class="btn btn-primary">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Sign In to Your Account</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginAccountOrUsername">Account Number or Username</label>
+                    <input type="text" id="loginAccountOrUsername" placeholder="Enter your account number or username" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPinOrPassword">PIN or Password</label>
+                    <input type="password" id="loginPinOrPassword" placeholder="Enter your PIN or password" required>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <div id="loginError" class="error-message hidden"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loan Application Modal -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Apply for a Loan</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="loanForm">
+                <div class="form-group">
+                    <label for="loanAmount">Loan Amount</label>
+                    <input type="number" id="loanAmount" placeholder="Enter amount" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="loanReason">Reason for Loan</label>
+                    <textarea id="loanReason" rows="3" placeholder="Explain why you need this loan" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="preferredDate1">First Payment Date</label>
+                    <input type="date" id="preferredDate1" required>
+                </div>
+                <div class="form-group">
+                    <label for="preferredDate2">Second Payment Date</label>
+                    <input type="date" id="preferredDate2" required>
+                </div>
+                <div id="loanError" class="error-message hidden"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://18.188.94.51:5789';
+        const API_BASE_URL_CREDS = 'http://18.188.94.51:80';
+        let currentAccount = null;
+        let currentPin = null;
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for saved credentials
+            checkSavedCredentials();
+
+            // Modal elements
+            const registerModal = document.getElementById('registerModal');
+            const loginModal = document.getElementById('loginModal');
+            const loanModal = document.getElementById('loanModal');
+            const mainContent = document.getElementById('mainContent');
+
+            // Button elements
+            const loginBtn = document.getElementById('loginBtn');
+            const openAccountBtn = document.getElementById('openAccountBtn');
+            const heroOpenAccountBtn = document.getElementById('heroOpenAccountBtn');
+            const ctaOpenAccountBtn = document.getElementById('ctaOpenAccountBtn');
+            const prevStepBtn = document.getElementById('prevStepBtn');
+            const nextStepBtn = document.getElementById('nextStepBtn');
+
+            // Form elements
+            const loginForm = document.getElementById('loginForm');
+            const loanForm = document.getElementById('loanForm');
+
+            // Open modals
+            [loginBtn, openAccountBtn, heroOpenAccountBtn, ctaOpenAccountBtn].forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (btn === loginBtn) {
+                            loginModal.classList.add('active');
+                        } else {
+                            currentStep = 1;
+                            updateStepDisplay();
+                            registerModal.classList.add('active');
+                        }
+                    });
+                }
+            });
+
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // Close buttons
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.modal').classList.remove('active');
+                });
+            });
+
+            // Step navigation
+            if (prevStepBtn) {
+                prevStepBtn.addEventListener('click', () => {
+                    if (currentStep > 1) {
+                        currentStep--;
+                        updateStepDisplay();
+                    }
+                });
+            }
+
+            if (nextStepBtn) {
+                nextStepBtn.addEventListener('click', async () => {
+                    if (!validateCurrentStep()) return;
+
+                    if (currentStep === 1) {
+                        // Create account
+                        try {
+                            const fullName = document.getElementById('fullName').value;
+                            const dob = document.getElementById('dob').value;
+                            
+                            const response = await fetch(`${API_BASE_URL}/api/accounts`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ full_name: fullName, date_of_birth: dob })
+                            });
+
+                            const data = await response.json();
+                            
+                            if (response.ok) {
+                                currentAccount = data.account_number;
+                                currentPin = data.pin;
+                                currentStep++;
+                                updateStepDisplay();
+                            } else {
+                                showError('registerError', data.error || 'Failed to create account');
+                            }
+                        } catch (error) {
+                            showError('registerError', 'Failed to connect to server');
+                        }
+                    } else if (currentStep === 2) {
+                        // Validate terms
+                        const initials = document.querySelectorAll('.initial-input');
+                        let allInitialsFilled = true;
+                        initials.forEach(input => {
+                            if (!input.value.trim()) {
+                                allInitialsFilled = false;
+                            }
+                        });
+
+                        if (!allInitialsFilled) {
+                            showError('registerError', 'Please initial all sections of the agreement');
+                            return;
+                        }
+
+                        const signature = document.getElementById('signature').value;
+                        const signatureDate = document.getElementById('signatureDate').value;
+
+                        if (!signature || !signatureDate) {
+                            showError('registerError', 'Please sign and date the agreement');
+                            return;
+                        }
+
+                        currentStep++;
+                        updateStepDisplay();
+                    } else if (currentStep === 3) {
+                        // Set credentials
+                        const username = document.getElementById('setUsername').value;
+                        const password = document.getElementById('setPassword').value;
+                        const confirmPassword = document.getElementById('confirmPassword').value;
+
+                        if (password !== confirmPassword) {
+                            showError('credentialsError', 'Passwords do not match');
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch(`${API_BASE_URL_CREDS}/api/set_credentials`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    account_number: currentAccount, 
+                                    username, 
+                                    password 
+                                })
+                            });
+
+                            if (response.ok) {
+                                currentStep++;
+                                updateStepDisplay();
+                                // Display account info
+                                document.getElementById('accountNumberDisplay').textContent = currentAccount;
+                                document.getElementById('pinDisplay').textContent = currentPin;
+                                
+                                // Save to cookies if remember me is checked
+                                if (document.getElementById('rememberMe')?.checked) {
+                                    setCookie('bankAccount', currentAccount, 30);
+                                    setCookie('bankPin', currentPin, 30);
+                                }
+                            } else {
+                                const data = await response.json();
+                                showError('credentialsError', data.error || 'Failed to set credentials');
+                            }
+                        } catch (error) {
+                            showError('credentialsError', 'Failed to connect to server');
+                        }
+                    } else if (currentStep === 4) {
+                        // Complete registration
+                        registerModal.classList.remove('active');
+                        loadDashboard();
+                    }
+                });
+            }
+
+            // Login form submission
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const accountOrUsername = document.getElementById('loginAccountOrUsername').value;
+                const pinOrPassword = document.getElementById('loginPinOrPassword').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+
+                // Try login with account number & PIN first
+                if (/^\d+$/.test(accountOrUsername)) {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/api/atm/auth`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                account_number: accountOrUsername, 
+                                pin: pinOrPassword 
+                            })
+                        });
+
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            currentAccount = accountOrUsername;
+                            currentPin = pinOrPassword;
+                            
+                            if (rememberMe) {
+                                setCookie('bankAccount', currentAccount, 30);
+                                setCookie('bankPin', currentPin, 30);
+                            }
+                            
+                            loginModal.classList.remove('active');
+                            loadDashboard();
+                        } else {
+                            showError('loginError', data.error || 'Invalid credentials');
+                        }
+                    } catch (error) {
+                        showError('loginError', 'Failed to connect to server');
+                    }
+                } else {
+                    // Try username/password login
+                    try {
+                        const response = await fetch(`${API_BASE_URL_CREDS}/api/login_user`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                username: accountOrUsername, 
+                                password: pinOrPassword 
+                            })
+                        });
+
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            currentAccount = data.account_number;
+                            // Show PIN entry
+                            mainContent.innerHTML = `
+                                <div class="card">
+                                    <h2>Enter Your PIN</h2>
+                                    <div class="form-group">
+                                        <label for="enterPin">PIN</label>
+                                        <input type="password" id="enterPin" placeholder="Enter your PIN" required>
+                                    </div>
+                                    <button id="submitPinBtn" class="btn btn-primary">Continue</button>
+                                    <div id="pinError" class="error-message hidden"></div>
+                                </div>
+                            `;
+                            
+                            document.getElementById('submitPinBtn').addEventListener('click', async () => {
+                                const pin = document.getElementById('enterPin').value;
+                                if (!pin) {
+                                    showError('pinError', 'PIN is required');
+                                    return;
+                                }
+                                
+                                try {
+                                    const pinResponse = await fetch(`${API_BASE_URL}/api/atm/auth`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ 
+                                            account_number: currentAccount, 
+                                            pin: pin 
+                                        })
+                                    });
+
+                                    const pinData = await pinResponse.json();
+                                    
+                                    if (pinResponse.ok) {
+                                        currentPin = pin;
+                                        
+                                        if (rememberMe) {
+                                            setCookie('bankAccount', currentAccount, 30);
+                                            setCookie('bankPin', currentPin, 30);
+                                        }
+                                        
+                                        loginModal.classList.remove('active');
+                                        loadDashboard();
+                                    } else {
+                                        showError('pinError', pinData.error || 'Invalid PIN');
+                                    }
+                                } catch (error) {
+                                    showError('pinError', 'Failed to connect to server');
+                                }
+                            });
+                        } else {
+                            showError('loginError', data.error || 'Invalid credentials');
+                        }
+                    } catch (error) {
+                        showError('loginError', 'Failed to connect to server');
+                    }
+                }
+            });
+
+            // Loan form submission
+            loanForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const amount = parseFloat(document.getElementById('loanAmount').value);
+                const reason = document.getElementById('loanReason').value;
+                const date1 = document.getElementById('preferredDate1').value;
+                const date2 = document.getElementById('preferredDate2').value;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/loans`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            account_number: currentAccount,
+                            pin: currentPin,
+                            amount: amount,
+                            reason: reason,
+                            preferred_date1: date1,
+                            preferred_date2: date2
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        loanModal.classList.remove('active');
+                        loadDashboard();
+                    } else {
+                        showError('loanError', data.error || 'Failed to apply for loan');
+                    }
+                } catch (error) {
+                    showError('loanError', 'Failed to connect to server');
+                }
+            });
+
+            // Update step display
+            function updateStepDisplay() {
+                document.getElementById('currentStep').textContent = currentStep;
+                document.querySelectorAll('.registration-step').forEach((step, index) => {
+                    step.classList.toggle('hidden', index + 1 !== currentStep);
+                });
+
+                if (prevStepBtn) {
+                    prevStepBtn.classList.toggle('hidden', currentStep === 1);
+                }
+
+                if (nextStepBtn) {
+                    nextStepBtn.textContent = currentStep === totalSteps ? 'Complete' : 'Next';
+                }
+            }
+
+            // Validate current step
+            function validateCurrentStep() {
+                if (currentStep === 1) {
+                    const fullName = document.getElementById('fullName').value;
+                    const dob = document.getElementById('dob').value;
+                    
+                    if (!fullName || !dob) {
+                        showError('registerError', 'Please fill in all fields');
+                        return false;
+                    }
+                } else if (currentStep === 2) {
+                    const initials = document.querySelectorAll('.initial-input');
+                    let allInitialsFilled = true;
+                    
+                    initials.forEach(input => {
+                        if (!input.value.trim()) {
+                            allInitialsFilled = false;
+                        }
+                    });
+
+                    if (!allInitialsFilled) {
+                        showError('registerError', 'Please initial all sections');
+                        return false;
+                    }
+
+                    const signature = document.getElementById('signature').value;
+                    const signatureDate = document.getElementById('signatureDate').value;
+                    
+                    if (!signature || !signatureDate) {
+                        showError('registerError', 'Please sign and date the agreement');
+                        return false;
+                    }
+                } else if (currentStep === 3) {
+                    const username = document.getElementById('setUsername').value;
+                    const password = document.getElementById('setPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    
+                    if (!username || !password || !confirmPassword) {
+                        showError('credentialsError', 'Please fill in all fields');
+                        return false;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        showError('credentialsError', 'Passwords do not match');
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+
+            // Show error message
+            function showError(elementId, message) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = message;
+                    element.classList.remove('hidden');
+                    setTimeout(() => {
+                        element.classList.add('hidden');
+                    }, 5000);
+                }
+            }
+
+            // Load dashboard
+            async function loadDashboard() {
+                if (!currentAccount || !currentPin) {
+                    mainContent.innerHTML = `
+                        <div class="card">
+                            <h2>Error</h2>
+                            <p class="error-message">Session expired. Please login again.</p>
+                            <button id="loginAgainBtn" class="btn btn-primary">Login</button>
+                        </div>
+                    `;
+                    document.getElementById('loginAgainBtn').addEventListener('click', () => {
+                        loginModal.classList.add('active');
+                    });
+                    return;
+                }
+
+                try {
+                    // Get account balance
+                    const balanceResponse = await fetch(`${API_BASE_URL}/api/accounts/${currentAccount}/balance`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin: currentPin })
+                    });
+
+                    const balanceData = await balanceResponse.json();
+
+                    if (!balanceResponse.ok) {
+                        throw new Error(balanceData.error || 'Failed to load account');
+                    }
+
+                    // Get transaction history
+                    const historyResponse = await fetch(`${API_BASE_URL}/api/accounts/${currentAccount}/history`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin: currentPin })
+                    });
+
+                    const historyData = await historyResponse.json();
+
+                    if (!historyResponse.ok) {
+                        throw new Error(historyData.error || 'Failed to load history');
+                    }
+
+                    // Render dashboard
+                    const statusClass = balanceData.status === 'active' ? 'status-active' : 
+                                      balanceData.status === 'on_hold' ? 'status-on-hold' : 'status-closed';
+
+                    mainContent.innerHTML = `
+                        <div class="grid">
+                            <div class="card">
+                                <h2 class="card-title">Account Overview</h2>
+                                <div>
+                                    <small>Account Number</small>
+                                    <div class="account-number">${currentAccount}</div>
+                                </div>
+                                <div class="balance-display">$${balanceData.balance.toFixed(2)}</div>
+                                <div class="account-status ${statusClass}">${balanceData.status}</div>
+                                <div style="margin-top: 20px;">
+                                    <button id="applyLoanBtn" class="btn btn-primary">Apply for Loan</button>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <h2 class="card-title">Recent Transactions</h2>
+                                <div id="transactionsList">
+                                    ${renderTransactions(historyData.history.slice(0, 5))}
+                                </div>
+                                <button id="viewAllTransactionsBtn" class="btn btn-outline" style="width: 100%; margin-top: 15px;">View All Transactions</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h2 class="card-title">Your Loans</h2>
+                            <div id="loansList">
+                                Loading loans...
+                            </div>
+                            <button id="viewAllLoansBtn" class="btn btn-outline" style="width: 100%; margin-top: 15px;">View All Loans</button>
+                        </div>
+                    `;
+
+                    // Add event listeners
+                    document.getElementById('applyLoanBtn').addEventListener('click', () => {
+                        loanModal.classList.add('active');
+                    });
+
+                    document.getElementById('viewAllTransactionsBtn').addEventListener('click', () => {
+                        viewAllTransactions();
+                    });
+
+                    document.getElementById('viewAllLoansBtn').addEventListener('click', () => {
+                        viewAllLoans();
+                    });
+
+                    // Load loans
+                    loadLoans();
+
+                } catch (error) {
+                    mainContent.innerHTML = `
+                        <div class="card">
+                            <h2>Error</h2>
+                            <p class="error-message">${error.message || 'Failed to load dashboard'}</p>
+                            <button id="retryBtn" class="btn btn-primary">Retry</button>
+                        </div>
+                    `;
+                    document.getElementById('retryBtn').addEventListener('click', loadDashboard);
+                }
+            }
+
+            // Render transactions
+            function renderTransactions(transactions) {
+                if (!transactions || transactions.length === 0) {
+                    return '<p>No transactions found</p>';
+                }
+
+                return transactions.map(transaction => {
+                    const amountClass = transaction.amount >= 0 ? 'positive' : 'negative';
+                    const amountDisplay = transaction.amount >= 0 ? 
+                        `+$${transaction.amount.toFixed(2)}` : `-$${Math.abs(transaction.amount).toFixed(2)}`;
+                    
+                    return `
+                        <div class="transaction-item">
+                            <div>
+                                <div>${transaction.description || transaction.type}</div>
+                                <div class="transaction-details">
+                                    ${new Date(transaction.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                            <div class="transaction-amount ${amountClass}">${amountDisplay}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // View all transactions
+            async function viewAllTransactions() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/accounts/${currentAccount}/history`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin: currentPin })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        mainContent.innerHTML = `
+                            <div class="card">
+                                <h2 class="card-title">Transaction History</h2>
+                                <div id="transactionsList">
+                                    ${renderTransactions(data.history)}
+                                </div>
+                                <button id="backToDashboardBtn" class="btn btn-outline" style="width: 100%; margin-top: 15px;">Back to Dashboard</button>
+                            </div>
+                        `;
+
+                        document.getElementById('backToDashboardBtn').addEventListener('click', loadDashboard);
+                    } else {
+                        throw new Error(data.error || 'Failed to load transactions');
+                    }
+                } catch (error) {
+                    showError('mainContent', error.message || 'Failed to load transactions');
+                }
+            }
+
+            // Load loans
+            async function loadLoans() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/accounts/${currentAccount}/loans`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin: currentPin })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        const loansList = document.getElementById('loansList');
+                        if (loansList) {
+                            loansList.innerHTML = renderLoans(data.loans.slice(0, 3));
+                        }
+                    } else {
+                        throw new Error(data.error || 'Failed to load loans');
+                    }
+                } catch (error) {
+                    const loansList = document.getElementById('loansList');
+                    if (loansList) {
+                        loansList.innerHTML = `<p class="error-message">${error.message || 'Failed to load loans'}</p>`;
+                    }
+                }
+            }
+
+            // Render loans
+            function renderLoans(loans) {
+                if (!loans || loans.length === 0) {
+                    return '<p>No loans found</p>';
+                }
+
+                return loans.map(loan => {
+                    const statusClass = loan.status === 'pending' ? 'status-pending' : 
+                                      loan.status === 'approved' ? 'status-approved' :
+                                      loan.status === 'denied' ? 'status-denied' : 'status-completed';
+                    
+                    return `
+                        <div class="loan-item">
+                            <div>
+                                <span class="loan-status ${statusClass}">${loan.status}</span>
+                                <strong>$${loan.amount.toFixed(2)}</strong>
+                            </div>
+                            <div style="margin-top: 5px;">${loan.reason}</div>
+                            ${loan.status === 'approved' ? `
+                                <div style="margin-top: 10px; font-size: 13px; color: var(--text-secondary);">
+                                    <div>1st payment: ${loan.approved_date1} (${loan.first_payment_done ? 'Paid' : 'Pending'})</div>
+                                    <div>2nd payment: ${loan.approved_date2} (${loan.second_payment_done ? 'Paid' : 'Pending'})</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // View all loans
+            async function viewAllLoans() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/accounts/${currentAccount}/loans`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin: currentPin })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        mainContent.innerHTML = `
+                            <div class="card">
+                                <h2 class="card-title">Your Loans</h2>
+                                <div id="loansList">
+                                    ${renderLoans(data.loans)}
+                                </div>
+                                <button id="backToDashboardBtn" class="btn btn-outline" style="width: 100%; margin-top: 15px;">Back to Dashboard</button>
+                            </div>
+                        `;
+
+                        document.getElementById('backToDashboardBtn').addEventListener('click', loadDashboard);
+                    } else {
+                        throw new Error(data.error || 'Failed to load loans');
+                    }
+                } catch (error) {
+                    showError('mainContent', error.message || 'Failed to load loans');
+                }
+            }
+
+            // Check for saved credentials
+            function checkSavedCredentials() {
+                const savedAccount = getCookie('bankAccount');
+                const savedPin = getCookie('bankPin');
+                
+                if (savedAccount && savedPin) {
+                    currentAccount = savedAccount;
+                    currentPin = savedPin;
+                    loadDashboard();
+                }
+            }
+
+            // Cookie functions
+            function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                const expires = "expires=" + date.toUTCString();
+                document.cookie = name + "=" + value + ";" + expires + ";path=/";
+            }
+
+            function getCookie(name) {
+                const cookieName = name + "=";
+                const decodedCookie = decodeURIComponent(document.cookie);
+                const cookieArray = decodedCookie.split(';');
+                
+                for (let i = 0; i < cookieArray.length; i++) {
+                    let cookie = cookieArray[i];
+                    while (cookie.charAt(0) === ' ') {
+                        cookie = cookie.substring(1);
+                    }
+                    if (cookie.indexOf(cookieName) === 0) {
+                        return cookie.substring(cookieName.length, cookie.length);
+                    }
+                }
+                return "";
+            }
+        });
+    </script>
+</body>
+</html>

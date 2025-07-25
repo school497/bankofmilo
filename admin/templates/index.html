@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank of Milo - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .sidebar {
+            transition: all 0.3s;
+        }
+        .content {
+            transition: all 0.3s;
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">Admin Login</h1>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="username">Username</label>
+                <input id="username" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="password">Password</label>
+                <input id="password" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button id="login-btn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Login
+            </button>
+            <p id="login-error" class="text-red-500 text-sm mt-2 hidden">Invalid credentials</p>
+        </div>
+    </div>
+
+    <!-- Main Admin Interface -->
+    <div id="admin-interface" class="hidden h-screen flex">
+        <!-- Sidebar -->
+        <div class="sidebar bg-gray-800 text-white w-64 flex-shrink-0">
+            <div class="p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold">Bank of Milo</h1>
+                <p class="text-gray-400 text-sm">Admin Panel</p>
+            </div>
+            <nav class="p-4">
+                <ul>
+                    <li class="mb-2">
+                        <button id="users-tab" class="w-full text-left px-4 py-2 rounded-md bg-gray-700 text-white font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                            </svg>
+                            Users
+                        </button>
+                    </li>
+                    <li class="mb-2">
+                        <button id="atm-tab" class="w-full text-left px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                            </svg>
+                            ATM Requests
+                        </button>
+                    </li>
+                    <li class="mb-2">
+                        <button id="loans-tab" class="w-full text-left px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
+                            </svg>
+                            Loan Requests
+                        </button>
+                    </li>
+                    <li>
+                        <button id="logout-btn" class="w-full text-left px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+                            </svg>
+                            Logout
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content flex-1 overflow-auto">
+            <!-- Users Content -->
+            <div id="users-content" class="p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Users</h2>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Number</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table" class="bg-white divide-y divide-gray-200">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ATM Requests Content -->
+            <div id="atm-content" class="p-8 hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">ATM Requests</h2>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Number</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="atm-table" class="bg-white divide-y divide-gray-200">
+                            <!-- ATM requests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loan Requests Content -->
+            <div id="loans-content" class="p-8 hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Loan Requests</h2>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Number</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loans-table" class="bg-white divide-y divide-gray-200">
+                            <!-- Loan requests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="user-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden">
+        <div class="max-w-4xl w-full bg-white rounded-lg shadow-xl mx-auto my-12 overflow-y-auto" style="max-height: 80vh;">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800" id="user-modal-title">User Details</h3>
+                    <button id="close-user-modal" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-900 mb-2">Account Information</h4>
+                        <div class="space-y-2">
+                            <p><span class="font-medium">Account Number:</span> <span id="modal-account-number"></span></p>
+                            <p><span class="font-medium">Full Name:</span> <span id="modal-full-name"></span></p>
+                            <p><span class="font-medium">Date of Birth:</span> <span id="modal-dob"></span></p>
+                            <p><span class="font-medium">Balance:</span> <span id="modal-balance"></span></p>
+                            <p><span class="font-medium">Status:</span> <span id="modal-status"></span></p>
+                            <p><span class="font-medium">Created At:</span> <span id="modal-created-at"></span></p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-900 mb-2">Account Actions</h4>
+                        <div class="space-y-3">
+                            <button id="close-account-btn" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                Close Account
+                            </button>
+                            <div id="account-action-message" class="text-sm hidden"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-2">Transactions</h4>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance After</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table" class="bg-white divide-y divide-gray-200">
+                                <!-- Transactions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-medium text-gray-900 mb-2">Loans</h4>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loans-list" class="bg-white divide-y divide-gray-200">
+                                <!-- Loans will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan Details Modal -->
+    <div id="loan-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden">
+        <div class="max-w-2xl w-full bg-white rounded-lg shadow-xl mx-auto my-12">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">Loan Application Details</h3>
+                    <button id="close-loan-modal" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <p class="font-medium">Applicant:</p>
+                        <p id="loan-applicant-name" class="text-gray-700"></p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Account Number:</p>
+                        <p id="loan-account-number" class="text-gray-700"></p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Loan Amount:</p>
+                        <p id="loan-amount" class="text-gray-700"></p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Reason:</p>
+                        <p id="loan-reason" class="text-gray-700"></p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Preferred Payment Dates:</p>
+                        <p id="loan-dates" class="text-gray-700"></p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Status:</p>
+                        <p id="loan-status" class="text-gray-700"></p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button id="approve-loan-btn" class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                        Approve
+                    </button>
+                    <button id="deny-loan-btn" class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                        Deny
+                    </button>
+                </div>
+                <div id="loan-action-message" class="text-sm mt-2 hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentLoanId = null;
+        let currentAccountNumber = null;
+
+        // DOM elements
+        const loginScreen = document.getElementById('login-screen');
+        const adminInterface = document.getElementById('admin-interface');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        
+        // Content tabs
+        const usersTab = document.getElementById('users-tab');
+        const atmTab = document.getElementById('atm-tab');
+        const loansTab = document.getElementById('loans-tab');
+        
+        // Content sections
+        const usersContent = document.getElementById('users-content');
+        const atmContent = document.getElementById('atm-content');
+        const loansContent = document.getElementById('loans-content');
+        
+        // Tables
+        const usersTable = document.getElementById('users-table');
+        const atmTable = document.getElementById('atm-table');
+        const loansTable = document.getElementById('loans-table');
+        
+        // Modals
+        const userModal = document.getElementById('user-modal');
+        const closeUserModal = document.getElementById('close-user-modal');
+        const loanModal = document.getElementById('loan-modal');
+        const closeLoanModal = document.getElementById('close-loan-modal');
+        
+        // Event listeners
+        loginBtn.addEventListener('click', handleLogin);
+        logoutBtn.addEventListener('click', handleLogout);
+        
+        usersTab.addEventListener('click', () => switchTab('users'));
+        atmTab.addEventListener('click', () => switchTab('atm'));
+        loansTab.addEventListener('click', () => switchTab('loans'));
+        
+        closeUserModal.addEventListener('click', () => userModal.classList.add('hidden'));
+        closeLoanModal.addEventListener('click', () => loanModal.classList.add('hidden'));
+        
+        // Functions
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            fetch('/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Login failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                loginScreen.classList.add('hidden');
+                adminInterface.classList.remove('hidden');
+                loadUsers();
+            })
+            .catch(error => {
+                loginError.classList.remove('hidden');
+                console.error('Error:', error);
+            });
+        }
+        
+        function handleLogout() {
+            fetch('/admin/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(() => {
+                adminInterface.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                loginError.classList.add('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function switchTab(tab) {
+            // Update active tab styling
+            usersTab.classList.remove('bg-gray-700', 'text-white');
+            usersTab.classList.add('hover:bg-gray-700', 'text-gray-300', 'hover:text-white');
+            atmTab.classList.remove('bg-gray-700', 'text-white');
+            atmTab.classList.add('hover:bg-gray-700', 'text-gray-300', 'hover:text-white');
+            loansTab.classList.remove('bg-gray-700', 'text-white');
+            loansTab.classList.add('hover:bg-gray-700', 'text-gray-300', 'hover:text-white');
+            
+            // Hide all content
+            usersContent.classList.add('hidden');
+            atmContent.classList.add('hidden');
+            loansContent.classList.add('hidden');
+            
+            // Show selected content and update tab styling
+            if (tab === 'users') {
+                usersTab.classList.add('bg-gray-700', 'text-white');
+                usersTab.classList.remove('hover:bg-gray-700', 'text-gray-300', 'hover:text-white');
+                usersContent.classList.remove('hidden');
+                loadUsers();
+            } else if (tab === 'atm') {
+                atmTab.classList.add('bg-gray-700', 'text-white');
+                atmTab.classList.remove('hover:bg-gray-700', 'text-gray-300', 'hover:text-white');
+                atmContent.classList.remove('hidden');
+                loadATMRequests();
+            } else if (tab === 'loans') {
+                loansTab.classList.add('bg-gray-700', 'text-white');
+                loansTab.classList.remove('hover:bg-gray-700', 'text-gray-300', 'hover:text-white');
+                loansContent.classList.remove('hidden');
+                loadLoans();
+            }
+        }
+        
+        function loadUsers() {
+            fetch('/admin/users')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load users');
+                }
+                return response.json();
+            })
+            .then(data => {
+                usersTable.innerHTML = '';
+                
+                if (data.accounts && data.accounts.length > 0) {
+                    data.accounts.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.account_number}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.full_name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${user.balance.toFixed(2)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status === 'active' ? 'bg-green-100 text-green-800' : user.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                    ${user.status}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <button class="text-blue-600 hover:text-blue-900 view-user-btn" data-account-number="${user.account_number}">View</button>
+                            </td>
+                        `;
+                        usersTable.appendChild(row);
+                    });
+                    
+                    // Add event listeners to view buttons
+                    document.querySelectorAll('.view-user-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const accountNumber = e.target.getAttribute('data-account-number');
+                            viewUserDetails(accountNumber);
+                        });
+                    });
+                } else {
+                    usersTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No users found</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                usersTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Error loading users</td></tr>';
+            });
+        }
+        
+        function viewUserDetails(accountNumber) {
+            currentAccountNumber = accountNumber;
+            
+            fetch(`/admin/user/${accountNumber}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load user details');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Populate account info
+                document.getElementById('modal-account-number').textContent = data.account.account_number;
+                document.getElementById('modal-full-name').textContent = data.account.full_name;
+                document.getElementById('modal-dob').textContent = data.account.date_of_birth;
+                document.getElementById('modal-balance').textContent = `$${data.account.balance.toFixed(2)}`;
+                document.getElementById('modal-status').textContent = data.account.status;
+                document.getElementById('modal-created-at').textContent = data.account.created_at;
+                
+                // Populate transactions
+                const transactionsTable = document.getElementById('transactions-table');
+                transactionsTable.innerHTML = '';
+                
+                if (data.transactions && data.transactions.length > 0) {
+                    data.transactions.forEach(transaction => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">${transaction.type}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}">${transaction.amount >= 0 ? '+' : ''}${transaction.amount.toFixed(2)}</td>
+                            <td class="px-4 py-2 text-sm text-gray-900">${transaction.description || ''}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">${new Date(transaction.timestamp).toLocaleString()}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">$${transaction.balance_after.toFixed(2)}</td>
+                        `;
+                        transactionsTable.appendChild(row);
+                    });
+                } else {
+                    transactionsTable.innerHTML = '<tr><td colspan="5" class="px-4 py-2 text-center text-gray-500">No transactions found</td></tr>';
+                }
+                
+                // Populate loans
+                const loansList = document.getElementById('loans-list');
+                loansList.innerHTML = '';
+                
+                if (data.loans && data.loans.length > 0) {
+                    data.loans.forEach(loan => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">$${loan.amount.toFixed(2)}</td>
+                            <td class="px-4 py-2 text-sm text-gray-900">${loan.reason}</td>
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${loan.status === 'approved' ? 'bg-green-100 text-green-800' : loan.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                    ${loan.status}
+                                </span>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">${new Date(loan.applied_at).toLocaleDateString()}</td>
+                        `;
+                        loansList.appendChild(row);
+                    });
+                } else {
+                    loansList.innerHTML = '<tr><td colspan="4" class="px-4 py-2 text-center text-gray-500">No loans found</td></tr>';
+                }
+                
+                // Add event listener to close account button
+                document.getElementById('close-account-btn').addEventListener('click', () => {
+                    if (confirm(`Are you sure you want to close account ${accountNumber}?`)) {
+                        closeAccount(accountNumber);
+                    }
+                });
+                
+                // Show modal
+                userModal.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to load user details');
+            });
+        }
+        
+        function closeAccount(accountNumber) {
+            fetch(`/admin/accounts/${accountNumber}/close`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: 'milo',
+                    password: 'milo'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to close account');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const messageDiv = document.getElementById('account-action-message');
+                messageDiv.textContent = 'Account closed successfully';
+                messageDiv.classList.remove('hidden', 'text-red-500');
+                messageDiv.classList.add('text-green-500');
+                
+                // Reload user details
+                viewUserDetails(accountNumber);
+                // Reload users list
+                loadUsers();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('account-action-message');
+                messageDiv.textContent = 'Failed to close account';
+                messageDiv.classList.remove('hidden', 'text-green-500');
+                messageDiv.classList.add('text-red-500');
+            });
+        }
+        
+        function loadATMRequests() {
+            fetch('/admin/atm-requests')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load ATM requests');
+                }
+                return response.json();
+            })
+            .then(data => {
+                atmTable.innerHTML = '';
+                
+                if (data.requests && data.requests.length > 0) {
+                    data.requests.forEach(request => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${request.full_name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${request.account_number}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${request.type === 'deposit' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
+                                    ${request.type}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm ${request.type === 'deposit' ? 'text-green-600' : 'text-red-600'}">${request.type === 'deposit' ? '+' : '-'}$${request.amount.toFixed(2)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                    ${request.status}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ${request.status === 'pending' ? 
+                                    `<button class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md complete-atm-btn" data-request-id="${request.id}">Complete</button>` : 
+                                    `<span class="text-gray-500">Completed at ${new Date(request.completed_at).toLocaleString()}</span>`}
+                            </td>
+                        `;
+                        atmTable.appendChild(row);
+                    });
+                    
+                    // Add event listeners to complete buttons
+                    document.querySelectorAll('.complete-atm-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const requestId = e.target.getAttribute('data-request-id');
+                            completeATMRequest(requestId);
+                        });
+                    });
+                } else {
+                    atmTable.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No ATM requests found</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                atmTable.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Error loading ATM requests</td></tr>';
+            });
+        }
+        
+        function completeATMRequest(requestId) {
+            fetch(`/admin/atm-requests/${requestId}/complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: 'milo',
+                    password: 'milo'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to complete ATM request');
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadATMRequests();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to complete ATM request');
+            });
+        }
+        
+        function loadLoans() {
+            fetch('/admin/loans')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load loans');
+                }
+                return response.json();
+            })
+            .then(data => {
+                loansTable.innerHTML = '';
+                
+                if (data.loans && data.loans.length > 0) {
+                    data.loans.forEach(loan => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${loan.full_name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${loan.account_number}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${loan.amount.toFixed(2)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${loan.status === 'approved' ? 'bg-green-100 text-green-800' : loan.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                    ${loan.status}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <button class="text-blue-600 hover:text-blue-900 view-loan-btn" data-loan-id="${loan.id}">View</button>
+                            </td>
+                        `;
+                        loansTable.appendChild(row);
+                    });
+                    
+                    // Add event listeners to view buttons
+                    document.querySelectorAll('.view-loan-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const loanId = e.target.getAttribute('data-loan-id');
+                            viewLoanDetails(loanId);
+                        });
+                    });
+                } else {
+                    loansTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No loan requests found</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loansTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Error loading loan requests</td></tr>';
+            });
+        }
+        
+        function viewLoanDetails(loanId) {
+            currentLoanId = loanId;
+            
+            fetch('/admin/loans')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load loans');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const loan = data.loans.find(l => l.id == loanId);
+                if (!loan) {
+                    throw new Error('Loan not found');
+                }
+                
+                // Populate loan details
+                document.getElementById('loan-applicant-name').textContent = loan.full_name;
+                document.getElementById('loan-account-number').textContent = loan.account_number;
+                document.getElementById('loan-amount').textContent = `$${loan.amount.toFixed(2)}`;
+                document.getElementById('loan-reason').textContent = loan.reason;
+                
+                let datesText = '';
+                if (loan.preferred_date1) {
+                    datesText += `First: ${new Date(loan.preferred_date1).toLocaleDateString()}`;
+                }
+                if (loan.preferred_date2) {
+                    datesText += `, Second: ${new Date(loan.preferred_date2).toLocaleDateString()}`;
+                }
+                document.getElementById('loan-dates').textContent = datesText;
+                
+                document.getElementById('loan-status').textContent = loan.status;
+                
+                // Show/hide buttons based on status
+                const approveBtn = document.getElementById('approve-loan-btn');
+                const denyBtn = document.getElementById('deny-loan-btn');
+                const messageDiv = document.getElementById('loan-action-message');
+                
+                if (loan.status === 'pending') {
+                    approveBtn.classList.remove('hidden');
+                    denyBtn.classList.remove('hidden');
+                    messageDiv.classList.add('hidden');
+                } else {
+                    approveBtn.classList.add('hidden');
+                    denyBtn.classList.add('hidden');
+                    messageDiv.textContent = `This loan has been ${loan.status}`;
+                    messageDiv.classList.remove('hidden');
+                    if (loan.status === 'approved') {
+                        messageDiv.classList.remove('text-red-500');
+                        messageDiv.classList.add('text-green-500');
+                    } else {
+                        messageDiv.classList.remove('text-green-500');
+                        messageDiv.classList.add('text-red-500');
+                    }
+                }
+                
+                // Add event listeners to approve/deny buttons
+                approveBtn.addEventListener('click', () => approveLoan(loanId));
+                denyBtn.addEventListener('click', () => denyLoan(loanId));
+                
+                // Show modal
+                loanModal.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to load loan details');
+            });
+        }
+        
+        function approveLoan(loanId) {
+            fetch(`/admin/loans/${loanId}/approve`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: 'milo',
+                    password: 'milo'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to approve loan');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const messageDiv = document.getElementById('loan-action-message');
+                messageDiv.textContent = 'Loan approved successfully';
+                messageDiv.classList.remove('hidden', 'text-red-500');
+                messageDiv.classList.add('text-green-500');
+                
+                // Hide buttons
+                document.getElementById('approve-loan-btn').classList.add('hidden');
+                document.getElementById('deny-loan-btn').classList.add('hidden');
+                
+                // Reload loans list
+                loadLoans();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('loan-action-message');
+                messageDiv.textContent = 'Failed to approve loan';
+                messageDiv.classList.remove('hidden', 'text-green-500');
+                messageDiv.classList.add('text-red-500');
+            });
+        }
+        
+        function denyLoan(loanId) {
+            fetch(`/admin/loans/${loanId}/deny`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: 'milo',
+                    password: 'milo'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to deny loan');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const messageDiv = document.getElementById('loan-action-message');
+                messageDiv.textContent = 'Loan denied successfully';
+                messageDiv.classList.remove('hidden', 'text-green-500');
+                messageDiv.classList.add('text-red-500');
+                
+                // Hide buttons
+                document.getElementById('approve-loan-btn').classList.add('hidden');
+                document.getElementById('deny-loan-btn').classList.add('hidden');
+                
+                // Reload loans list
+                loadLoans();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('loan-action-message');
+                messageDiv.textContent = 'Failed to deny loan';
+                messageDiv.classList.remove('hidden', 'text-green-500');
+                messageDiv.classList.add('text-red-500');
+            });
+        }
+        
+        // Initialize
+        switchTab('users');
+    </script>
+</body>
+</html>
