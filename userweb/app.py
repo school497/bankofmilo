@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # API configuration
-API_BASE_URL = "http://18.188.94.51:5789"
+API_BASE_URL = "http://18.188.94.51:81"
 DB_PATH = os.path.join(os.path.dirname(__file__), 'users.db')
 
 def init_db():
@@ -67,4 +67,4 @@ def login_user():
     return jsonify({'error': 'Invalid username or password'}), 401
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=82, debug=True)
